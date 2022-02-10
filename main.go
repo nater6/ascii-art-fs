@@ -77,17 +77,24 @@ func Condition(mapascii map[int][]string, a string) {
 func main() {
 	args := os.Args
 	if len(args) != 3 {
+		// error for missing or extra arguments
 		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
 	}
 	if args[2] == "standard" || args[2] == "shadow" || args[2] == "thinkertoy" {
+		// get banner name form arguments
 		filename := "banner/" + args[2] + ".txt"
+		// open banner file
 		file := openFile(filename)
+		// slice banner by ascii art
 		lttrlines := sliceFile(file)
+		// create map of ascii art
 		mapslice := Createmap(lttrlines)
+		// get string from arguments and print as ascii art
 		Output := os.Args[1]
 		Condition(mapslice, Output)
 		file.Close()
 	} else {
+		// error for incorrect banner name
 		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
 	}
 }
