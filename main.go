@@ -8,22 +8,15 @@ import (
 	"strings"
 )
 
-func main() {
-	// Get banner name from cmd line
-	if len(os.Args) != 3 {
-		fmt.Println("Usage: go run . [STRING] [BANNER]")
-		fmt.Print("EX: go run . something standard")
-		return
-	}
-
-	bName := os.Args[2] + ".txt"
-
-	file, err := os.Open(bName)
+func openFile(filename string) *os.File {
+	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR: %s", err)
 	}
+	return file
+}
 
-	// file to slice of string by line
+func sliceFile(file *os.File) []string {
 	var lttrlines []string
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
@@ -35,107 +28,66 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		fmt.Println(err)
 	}
+	return lttrlines
+}
 
-	// find a string in a scanned file
-	// Splits on newlines by default.
-	ln1 := ""
-	ln2 := ""
-	ln3 := ""
-	ln4 := ""
-	ln5 := ""
-	ln6 := ""
-	ln7 := ""
-	ln8 := ""
+func Createmap(slice []string) map[int][]string {
+	mapslice := make(map[int][]string)
+	ascii := 32
+	count := 0
+	split := 0
+	empty := []string{}
 
-	line := 0
-	Output := os.Args[1]
-	SlcOutput := []rune(Output)
-	dash := strings.Index(Output, `\n`)
+	for split < len(slice)-9 {
+		split = count * 9
+		for i := split; i < split+9; i++ {
+			empty = append(empty, slice[i])
+		}
+		mapslice[ascii] = empty
+		empty = []string{}
+		ascii++
+		count++
+	}
 
-	for i := 0; i < len(SlcOutput); i++ {
-		if i == dash && dash >= 0 {
-			if ln1 != "" && ln2 != "" && ln3 != "" && ln4 != "" && ln5 != "" && ln6 != "" && ln7 != "" && ln8 != "" {
-				fmt.Println(ln1)
-				fmt.Println(ln2)
-				fmt.Println(ln3)
-				fmt.Println(ln4)
-				fmt.Println(ln5)
-				fmt.Println(ln6)
-				fmt.Println(ln7)
-				fmt.Println(ln8)
-			} else {
-				fmt.Println()
-			}
+	return mapslice
+}
 
-			ln1 = ""
-			ln2 = ""
-			ln3 = ""
-			ln4 = ""
-			ln5 = ""
-			ln6 = ""
-			ln7 = ""
-			ln8 = ""
-			dash = dash + strings.Index(Output[dash+1:], `\n`) + 1
-			i++
+func Printascii(mapascii map[int][]string, word string) string {
+	toprint := ""
+	for i := 1; i <= 8; i++ {
+		for _, c := range word {
+			toprint += mapascii[int(c)][i]
+		}
+		toprint += "\n"
+	}
+	return toprint
+}
+
+func Condition(mapascii map[int][]string, a string) {
+	splitA := strings.Split(a, "\\n")
+	for _, w := range splitA {
+		if w != "" {
+			fmt.Print(Printascii(mapascii, w))
 		} else {
-			for j, s := range lttrlines {
-				line = j
-				if len(s) > 0 && s == string(SlcOutput[i]) {
-					break
-				}
-
-			}
-
-			for i := line + 1; i <= line+8; i++ {
-				if i == line+1 {
-					ln1 = ln1 + lttrlines[i]
-				}
-				if i == line+2 {
-					ln2 = ln2 + lttrlines[i]
-				}
-				if i == line+3 {
-					ln3 = ln3 + lttrlines[i]
-				}
-				if i == line+4 {
-					ln4 = ln4 + lttrlines[i]
-				}
-				if i == line+5 {
-					ln5 = ln5 + lttrlines[i]
-				}
-				if i == line+6 {
-					ln6 = ln6 + lttrlines[i]
-				}
-				if i == line+7 {
-					ln7 = ln7 + lttrlines[i]
-				}
-				if i == line+8 {
-					ln8 = ln8 + lttrlines[i]
-				}
-
-			}
-			if i == len(Output)-1 {
-				fmt.Println(ln1)
-				fmt.Println(ln2)
-				fmt.Println(ln3)
-				fmt.Println(ln4)
-				fmt.Println(ln5)
-				fmt.Println(ln6)
-				fmt.Println(ln7)
-				fmt.Println(ln8)
-				ln1 = ""
-				ln2 = ""
-				ln3 = ""
-				ln4 = ""
-				ln5 = ""
-				ln6 = ""
-				ln7 = ""
-				ln8 = ""
-			}
+			fmt.Println()
 		}
 	}
-	if err := scanner.Err(); err != nil {
-		fmt.Println(err)
-		// Handle the error
+}
+
+func main() {
+	args := os.Args
+	if len(args) != 3 {
+		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
 	}
-	file.Close()
+	if args[2] == "standard" || args[2] == "shadow" || args[2] == "thinkertoy" {
+		filename := args[2] + ".txt"
+		file := openFile(filename)
+		lttrlines := sliceFile(file)
+		mapslice := Createmap(lttrlines)
+		Output := os.Args[1]
+		Condition(mapslice, Output)
+		file.Close()
+	} else {
+		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
+	}
 }
