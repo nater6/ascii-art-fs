@@ -80,7 +80,7 @@ func main() {
 		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
 	}
 	if args[2] == "standard" || args[2] == "shadow" || args[2] == "thinkertoy" {
-		filename := args[2] + ".txt"
+		filename := "banner/" + args[2] + ".txt"
 		file := openFile(filename)
 		lttrlines := sliceFile(file)
 		mapslice := Createmap(lttrlines)
