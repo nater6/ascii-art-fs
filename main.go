@@ -78,9 +78,9 @@ func main() {
 	args := os.Args
 	if len(args) != 3 {
 		// error for missing or extra arguments
-		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
-	}
-	if args[2] == "standard" || args[2] == "shadow" || args[2] == "thinkertoy" {
+		fmt.Println("Usage: go run . [STRING] [BANNER] ")
+		fmt.Println(" EX: go run . something standard")
+	} else if args[2] == "standard" || args[2] == "shadow" || args[2] == "thinkertoy" {
 		// get banner name form arguments
 		filename := "banner/" + args[2] + ".txt"
 		// open banner file
@@ -95,6 +95,7 @@ func main() {
 		file.Close()
 	} else {
 		// error for incorrect banner name
-		fmt.Print("Usage: go run . [STRING] [BANNER] EX: go run . something standard")
+		fmt.Println("Usage: go run . [STRING] [BANNER] ")
+		fmt.Println(" EX: go run . something standard")
 	}
 }
